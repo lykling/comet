@@ -1,0 +1,13 @@
+#!/bin/bash
+
+if [[ $# -lt 1 ]]
+then
+    echo "arg error";
+    exit 1;
+fi
+num=`wc -l $1 | cut -d' ' -f1`;
+for i in `seq 1 ${num}`
+do
+    linecnt=`sed -n "$i p" $1 | wc -c`;
+    echo "line-$i: "${linecnt}
+done
