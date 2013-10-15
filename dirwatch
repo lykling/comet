@@ -1,0 +1,7 @@
+#!/bin/bash
+
+function see() {
+	watch -d -n 1 "df; ls -FlAt $1"
+}
+
+see $1

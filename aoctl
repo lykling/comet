@@ -1,0 +1,96 @@
+#!/bin/sh
+#Author:      Lykling
+#Description: A script to change the volume of
+#             'Master Playback or Headphone Playback'
+#Update:      2012-3-2
+
+CARD=0
+#MPS="numid=4,iface=MIXER,name='Master Playback Switch'"
+#MPV="numid=3,iface=MIXER,name='Master Playback Volume'"
+MPS="numid=15,iface=MIXER,name='Master Playback Switch'"
+MPV="numid=14,iface=MIXER,name='Master Playback Volume'"
+HPS="numid=2,iface=MIXER,name='Headphone Playback Switch'"
+HPV="numid=1,iface=MIXER,name='Headphone Playback Volume'"
+if [[ $CARD -eq 0 ]]
+then
+	MPS="numid=15,iface=MIXER,name='Master Playback Switch'";
+	MPV="numid=14,iface=MIXER,name='Master Playback Volume'";
+	HPS="numid=2,iface=MIXER,name='Headphone Playback Switch'";
+	HPV="numid=1,iface=MIXER,name='Headphone Playback Volume'";
+else
+	MPS="numid=4,iface=MIXER,name='Master Playback Switch'";
+	MPV="numid=3,iface=MIXER,name='Master Playback Volume'";
+fi
+
+VOL_CUR=`amixer -c$CARD cget numid=14,iface=MIXER,name='Master Playback Volume' | grep : |cut -d = -f2`
+
+case $@ in
+	-mv*)
+		if [[ $CARD -eq 0 ]]
+		then
+			VOL_CUR=`amixer -c$CARD cget $MPV | grep : | cut -d = -f2`
+			VOL_INC=`echo $@ | cut -d v -f2`
+			VOL_TAR=$(($VOL_CUR$VOL_INC))
+			if [ $VOL_TAR -lt 0 ]
+			then
+				VOL_TAR=0
+			fi
+			amixer -c$CARD cset "$MPV" "$VOL_TAR" > /dev/null
+			exit 0
+		else
+			VOL_CUR=`amixer -c$CARD cget $MPV | grep : | cut -d = -f2`
+			VOL_CUR_HL=`echo $VOL_CUR | cut -d , -f1`
+			VOL_CUR_HR=`echo $VOL_CUR | cut -d , -f2`
+			VOL_INC=`echo $@ | cut -d v -f2`
+	#		echo $VOL_INC
+			VOL_INC_HL=`echo $VOL_INC | cut -d , -f1`
+			VOL_INC_HR=`echo $VOL_INC | cut -d , -f2`
+	#		echo $VOL_INC_HL,$VOL_INC_HR
+			VOL_TAR_HL=$(($VOL_CUR_HL$VOL_INC_HL))
+			VOL_TAR_HR=$(($VOL_CUR_HR$VOL_INC_HR))
+	#		echo $VOL_TAR_HL,$VOL_TAR_HR
+			if [ $VOL_TAR_HL -lt 0 ]
+			then
+				VOL_TAR_HL=0
+			fi
+			if [ $VOL_TAR_HR -lt 0 ]
+			then
+				VOL_TAR_HR=0
+			fi
+			amixer -c$CARD cset "$MPV" "$VOL_TAR_HL,$VOL_TAR_HR" > /dev/null
+	#		echo amixer -c$CARD cset "$MPV" "$VOL_TAR_HL,$VOL_TAR_HR"
+			exit 0
+		fi
+		;;
+#	-hv*)
+#		VOL_CUR=`amixer -c$CARD cget $HPV | grep : | cut -d = -f2`
+#		VOL_CUR_HL=`echo $VOL_CUR | cut -d , -f1`
+#		VOL_CUR_HR=`echo $VOL_CUR | cut -d , -f2`
+#		VOL_INC=`echo $@ | cut -d v -f2`
+##		echo $VOL_INC
+#		VOL_INC_HL=`echo $VOL_INC | cut -d , -f1`
+#		VOL_INC_HR=`echo $VOL_INC | cut -d , -f2`
+##		echo $VOL_INC_HL,$VOL_INC_HR
+#		VOL_TAR_HL=$(($VOL_CUR_HL$VOL_INC_HL))
+#		VOL_TAR_HR=$(($VOL_CUR_HR$VOL_INC_HR))
+##		echo $VOL_TAR_HL,$VOL_TAR_HR
+#		if [ $VOL_TAR_HL -lt 0 ]
+#		then
+#			VOL_TAR_HL=0
+#		fi
+#		if [ $VOL_TAR_HR -lt 0 ]
+#		then
+#			VOL_TAR_HR=0
+#		fi
+#		amixer -c$CARD cset "$HPV" "$VOL_TAR_HL,$VOL_TAR_HR" > /dev/null
+##		echo amixer -c$CARD cset "$HPV" "$VOL_TAR_HL,$VOL_TAR_HR"
+#		exit 0
+#		;;
+	* )
+		echo "usage: aoctl -mvOPd (while OP is '+' or '-' and d is a number)"
+		echo "       aoctl -hvOPd,OPd (while OP is '+' or '-' and d is a number)"
+		exit 1
+		;;
+esac
+exit 0
+

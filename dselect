@@ -1,0 +1,28 @@
+#!/bin/bash
+
+HOME=/home/lykling
+RCFILE=.xinitrc
+PROFILES=(`ls ~/.xinitrc.*`);
+LIST=(${PROFILES[@]##*.});
+
+case $1 in
+    "list")
+        for index in `seq 0 $(expr ${#LIST[@]} - 1)`;
+        do
+            echo [$index] ${LIST[$index]};
+        done
+        ;;
+    "set")
+        choice=$2;
+        echo choice: $choice;
+        if [[ -f ${PROFILES[$choice]} ]]
+        then
+            echo ln -sf ${HOME}/${PROFILES[$choice]} ${HOME}/${RCFILE};
+            ln -sf ${PROFILES[$choice]} ${HOME}/${RCFILE};
+        fi
+        ;;
+    *)
+        exit 1;
+        ;;
+esac
+exit 0;
