@@ -1,0 +1,114 @@
+#!/bin/bash
+# Author:	Lykling
+# Version:	1.0
+# Update:	Sun Jan 26 23:02:44 CST 2013
+
+TIME=$((`date "+%-s"`));
+HOUR=$(( `date "+%-H"` ));
+MINUTE=$(( `date "+%-M"` ));
+MONTH=$(( `date "+%-m"` ));
+SECOND=$(( `date "+%-S"` ));
+YEAR=$(( `date "+%-Y"` ));
+DAY=$(( `date "+%-d"` ));
+SPM=60
+MPH=60
+HPD=24
+DPM=(31 28 31 30 31 30 31 31 30 31 30 31)
+MPY=12
+
+function update() {
+	#MINUTE=`expr $MINUTE + $(( $SECOND + ($SECOND < 0) )) / $SPM - $(( $SECOND < 0 ))`;
+	#SECOND=`expr $(( $SECOND % $SPM + $SPM )) % $SPM`;
+	#HOUR=`expr $HOUR + $(( $MINUTE + ($MINUTE < 0) )) / $MPH - $(( $MINUTE < 0 ))`;
+	#MINUTE=`expr $(( $MINUTE % $MPH + $MPH )) % $MPH`;
+	#DAY=`expr $DAY + $(( $HOUR + ($HOUR < 0) )) / $HPD - $(( $HOUR < 0 ))`;
+	#HOUR=`expr $(( $HOUR % $HPD + $HPD )) % $HPD`;
+	#YEAR=`expr $YEAR + $(( $MONTH - ($MONTH > 0) )) / $MPY - $(( $MONTH <= 0 ))`;
+	#MONTH=`expr $(( $MONTH % $MPY + $MPY - 1 )) % $MPY + 1`;
+	MINUTE=$(( $MINUTE + ($SECOND + ($SECOND < 0)) / $SPM - ($SECOND < 0) ));
+	SECOND=$(( ($SECOND % $SPM + $SPM) % $SPM ));
+	HOUR=$(( $HOUR + ($MINUTE + ($MINUTE < 0)) / $MPH - ($MINUTE < 0) ));
+	MINUTE=$(( ($MINUTE % $MPH + $MPH) % $MPH ));
+	DAY=$(( $DAY + ($HOUR + ($HOUR < 0)) / $HPD - ($HOUR < 0) ));
+	HOUR=$(( ($HOUR % $HPD + $HPD) % $HPD ));
+	YEAR=$(( $YEAR + ($MONTH - ($MONTH > 0)) / $MPY - ($MONTH <= 0) ));
+	MONTH=$(( ($MONTH % $MPY + $MPY - 1) % $MPY + 1 ));
+	#echo "YEAR=$YEAR"
+	#echo "MONTH=$MONTH"
+	#echo "DAY=$DAY"
+	#echo "HOUR=$HOUR"
+	#echo "MINUTE=$MINUTE"
+	while [[ $(( ($DAY <= 0) || ($DAY > ${DPM[$(( $MONTH - 1 ))]}) )) -ne 0 ]]
+	do
+		if [[ $DAY -le 0 ]]
+		then
+			#PREMONTH=`expr $(( ($MONTH - 1) % $MPY + $MPY - 1 )) % $MPY + 1`;
+			#DAY=`expr $DAY + ${DPM[$(( $PREMONTH - 1 ))]} + $(( ($PREMONTH == 2) && ($YEAR % 4 == 0) ))`;
+			#MONTH=`expr $MONTH - 1`
+			PREMONTH=$(( ( ($MONTH - 1) % $MPY + $MPY - 1 ) % $MPY + 1 ));
+			DAY=$(( $DAY + ${DPM[$(( $PREMONTH - 1 ))]} + ( ($PREMONTH == 2) && ($YEAR % 4 == 0) ) ));
+			MONTH=$(( $MONTH - 1 ))
+		else
+			#DAY=$(( $DAY - ${DPM[$(( $MONTH - 1 ))]} - $(( ($MONTH == 2) && ($YEAR % 4 == 0) )) ));
+			#MONTH=$(( $MONTH + 1 ))
+			DAY=$(( $DAY - ${DPM[$(( $MONTH - 1 ))]} - ( ($MONTH == 2) && ($YEAR % 4 == 0) ) ));
+			MONTH=$(( $MONTH + 1 ))
+		fi
+		#YEAR=$(( $YEAR + $(( $MONTH - ($MONTH > 0) )) / $MPY - $(( $MONTH <= 0 )) ));
+		#MONTH=$(( $(( $MONTH % $MPY  + $MPY - 1 )) % $MPY + 1 ));
+		YEAR=$(( $YEAR + ($MONTH - ($MONTH > 0)) / $MPY - ($MONTH <= 0) ));
+		MONTH=$(( ($MONTH % $MPY  + $MPY - 1) % $MPY + 1 ));
+		#echo "TEST:DAY=$DAY"
+		#echo "TEST:MONTH=$MONTH"
+		#echo "TEST:YEAR=$YEAR"
+	done
+}
+
+case $@ in
+	-y*)
+		DET=`echo $@ | cut -d d -f2`;
+		YEAR=$(($YEAR$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	-m*)
+		DET=`echo $@ | cut -d d -f2`;
+		MONTH=$(($MONTH$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	-d*)
+		DET=`echo $@ | cut -d d -f2`;
+		DAY=$(($DAY$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	-H*)
+		DET=`echo $@ | cut -d h -f2`;
+		HOUR=$(($HOUR$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	-M*)
+		DET=`echo $@ | cut -d d -f2`;
+		MINUTE=$(($MINUTE$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	-S*)
+		DET=`echo $@ | cut -d d -f2`;
+		SECOND=$(($SECOND$DET));
+		update;
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+	*)
+		echo "$YEAR-$MONTH-$DAY $HOUR:$MINUTE:$SECOND";
+		exit 0;
+		;;
+esac
