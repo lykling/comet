@@ -1,0 +1,43 @@
+#!/bin/bash
+# a hook of command, set some default options
+
+ERRLOGPATH="/tmp";
+ERRLOGFILE=".ycmd.err";
+CALLER=$0;
+CMDNAME=${CALLER##*/};
+NCMD=$(which ${CMDNAME/y/} 2> ${ERRLOGPATH}/${ERRLOGFILE});
+if [ "$?" -ne "0" ]
+then
+    which cat &> /dev/null;
+    if [ "$?" -eq "0" -a -f ${ERRLOGPATH}/${ERRLOGFILE} ]
+    then
+        cat ${ERRLOGPATH}/${ERRLOGFILE};
+    fi
+    exit 1;
+fi
+case ${NCMD##*/} in
+    "ls")
+        OPTS="--color=tty -h";
+        ;;
+    "grep")
+        OPTS="--color=auto --exclude-dir=.svn --exclude-dir=.git --exclude=tags --exclude-dir=out --exclude-dir=output -nE";
+        ;;
+    "cd")
+        OPTS="";
+        ;;
+    "less")
+        OPTS="-r";
+        ;;
+    "df")
+        OPTS="-ah";
+        ;;
+    "du")
+        OPTS="-ah --max-depth 1";
+        ;;
+    *)
+        OPTS="";
+        ;;
+esac
+
+echo ${NCMD} ${OPTS} $*;
+${NCMD} ${OPTS} "$@";
