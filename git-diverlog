@@ -1,0 +1,48 @@
+#!/bin/bash
+#
+# Author: Pride Leong<lykling.lyk@gmail.com>
+# Date: Wed Jun 21 12:18:13 CST 2017
+# Brief:
+#   Show all log of branches from the diver base of them
+# Arguments:
+#   None
+# Returns:
+#   succ: 0
+#   fail: 1
+
+# Flags
+#set -u
+#set -e
+set -o pipefail
+
+# Exit code
+readonly EX_SUCC=0
+readonly EX_FAIL=1
+
+
+function main() {
+    option_args=()
+    non_option_arg=()
+    for opt in "$@"; do
+        if [[ "${opt}" == "--" ]]; then
+            :
+        elif [[ "${opt:0:1}" == "-" ]]; then
+            option_args[${#option_args[@]}]="${opt}"
+        else
+            non_option_args[${#non_option_args[@]}]="${opt}"
+        fi
+    done
+    ignore_list=()
+    for rev in $(git merge-base --octopus --all "${non_option_args[@]}" --); do
+        ignore_list[${#ignore_list[@]}]="--not"
+        ignore_list[${#ignore_list[@]}]="${rev}~1"
+    done
+    git log \
+        "${option_args[@]}" \
+        "${non_option_args[@]}" \
+        "${ignore_list[@]}" \
+        --
+}
+
+
+main "$@"
