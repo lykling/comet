@@ -22,18 +22,19 @@ readonly EX_FAIL=1
 
 
 # Usage
-function usage() {
+function usage {
     echo "Usage: $0 [-h|--help] [-t|--show-type]"
     echo '
 Options:
     -h|--help           print this and exit
     -t|--show-type      show object type
+    -s|--sum            count objects
 '
 }
 
 
 # Get object list
-function get_object_list() {
+function get_object_list {
     # Get packed object list
     find $(git rev-parse --git-dir)/objects/pack -name 'pack-*.idx' \
         | while read p ; do git show-index < $p | cut -f2 -d' '; done
@@ -43,10 +44,31 @@ function get_object_list() {
         | sed -e 's:.*\([0-9a-f]\{2\}\)/\([0-9a-f]\{38\}\):\1\2:'
 }
 
+function count {
+    local by_type=${1}
+    if [[ "${by_type}" == "1" ]]; then
+        awk -F ' ' '{s[$2] += 1;} END{for (k in s) {print k, s[k];}}'
+    else
+        awk '{s += 1;} END{print s;}'
+    fi
+}
+
+function show {
+    while read x; do
+        echo "${x}"
+    done
+}
+
+function add_type {
+    while read p; do
+        echo "${p} $(git cat-file -t ${p})"
+    done
+}
+
 
 # Main entry
-function main() {
-    opts=($(getopt -o 'ht' -l 'help,show-type' -- "$@"))
+function main {
+    opts=($(getopt -o 'hts' -l 'help,show-type,--sum' -- "$@"))
     for ((i = 0; i < ${#opts[@]}; ++i)); do
         flag=${opts[$i]}
         case ${flag} in
@@ -56,6 +78,9 @@ function main() {
             -t|--show-type)
                 show_type=1
                 ;;
+            -s|--sum)
+                make_summary=1
+                ;;
             *)
                 ;;
         esac
@@ -64,14 +89,20 @@ function main() {
         usage
         exit $EX_SUCC
     fi
-    list=($(get_object_list))
-    for item in "${list[@]}"; do
-        if [[ "${show_type}" == "1" ]]; then
-            echo "$(git cat-file -t ${item}) ${item}"
+    if [[ "${show_type}" == "1" ]]; then
+        if [[ "${make_summary}" == "1" ]]; then
+            count 1 < <(add_type < <(get_object_list))
         else
-            echo ${item}
+            show < <(add_type < <(get_object_list))
         fi
-    done
+    else
+        if [[ "${make_summary}" == "1" ]]; then
+            count < <(get_object_list)
+        else
+            show < <(get_object_list)
+        fi
+    fi
+    return $EX_SUCC
 }
 
 
