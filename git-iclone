@@ -1,0 +1,78 @@
+#!/bin/bash
+#
+# Author: Pride Leong<lykling.lyk@gmail.com>
+# Date: Thu Feb  9 02:43:38 PM CST 2023
+# Brief:
+#   Clone repo from popular service
+# Arguments:
+#   None
+# Returns:
+#   succ: 0
+#   fail: 1
+
+# Flags
+#set -u
+#set -e
+set -o pipefail
+
+# Exit code
+readonly EX_SUCC=0
+readonly EX_FAIL=1
+
+# usage
+function usage {
+    echo "Usage: $0 [-h|--help] [-p|--prefix] [--ignore-service-path]"
+    echo '
+Options:
+    -h|--help               print this and exit
+    -p|--prefix             prefix of install path, default to $HOME/ring
+    --ignore-service-path   ignore service path
+'
+}
+
+function clone {
+    local prefix="$HOME/ring"
+    local show_help=0
+    local ignore_service_path=0
+
+    local opts=($(getopt -o 'hp:' -l 'help,prefix:,ignore-service-path' -- "$@"))
+    local args=()
+    for ((i = 0; i < ${#opts[@]}; ++i)); do
+        local flag="${opts[$i]}"
+        case ${flag} in
+            -h|--help)
+                show_help=1
+                ;;
+            -p|--prefix)
+                prefix="${opts[$((++i))]}"
+                ;;
+            --ignore-service-path)
+                ignore_service_path=1
+                ;;
+            --)
+                args=("${opts[@]:$((i+1))}")
+                ;;
+            *)
+                ;;
+        esac
+    done
+    if [[ "${show_help}" == '1' ]]; then
+        usage
+        exit ${EX_SUCC}
+    fi
+
+    local result=($(resolve_repo_install_path.py "${args[0]}"))
+    local repo="${result[0]}"
+    local install_path="${result[1]}"
+    if [[ "${ignore_service_path}" == '1' ]]; then
+        install_path="${install_path#*/}"
+    fi
+
+    git clone "${repo}" "${prefix}/${install_path}"
+}
+
+function main {
+    clone "$@"
+}
+
+main "$@"
