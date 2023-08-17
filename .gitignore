@@ -4,3 +4,6 @@
 *.pyc
 dist
 *.egg-info
+
+/yycli/build
+/yycli/dist
