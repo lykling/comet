@@ -1,9 +1,6 @@
 """config
 """
 
-import os
-import sys
-import configparser
 import tomllib
 import importlib.resources
 import pathlib
