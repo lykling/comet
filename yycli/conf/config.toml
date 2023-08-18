@@ -1,1 +1,9 @@
 [yycli.commands.crypt]
+  name = 'crypt'
+  default-profile = 'default'
+  [yycli.commands.crypt.profiles.default]
+  name = 'default'
+  aes_key = '0000000000000000000000000000000000000000000000000000000000000000'
+  aes_iv = '00000000000000000000000000000000'
+  aes_length = 16
+  algorithm = 'aes-256-cbc'
