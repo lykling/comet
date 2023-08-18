@@ -28,9 +28,6 @@ jobs:
           # default set of ruff rules with GitHub Annotations
           ruff --format=github --target-version=py311 yycli
       - name: Test with pytest
-        run: |
-          pytest
-      - name: Test with pytest
         run: pytest yycli/tests.py --doctest-modules --junitxml=junit/test-results-${{ matrix.python-version }}.xml
       - name: Upload pytest test results
         uses: actions/upload-artifact@v3
