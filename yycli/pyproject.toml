@@ -1,7 +1,7 @@
 [project]
-name = yycli
-version = 0.0.1
-author = [
+name = "yycli"
+version = "0.0.1"
+authors = [
   { name = "Pride Leong", email = "lykling.lyk@gmail.com" }
 ]
 description = "tools for routine work"
