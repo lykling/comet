@@ -1,5 +1,6 @@
 """commands
 """
 from . import crypt
+from . import confuse
 
-__all__ = ['crypt']
+__all__ = ['crypt', 'confuse']

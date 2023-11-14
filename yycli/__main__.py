@@ -27,6 +27,9 @@ def main():
     crypt_parser = subparsers.add_parser('crypt', help='crypt help')
     register_command(crypt_parser, 'crypt', commands.crypt.crypt,
                      commands.crypt.args_parser)
+    confuse_parser = subparsers.add_parser('confuse', help='confuse help')
+    register_command(confuse_parser, 'confuse', commands.confuse.entrypoint,
+                     commands.confuse.args_parser)
     args = parser.parse_args()
     if args.command is None:
         parser.print_help()
