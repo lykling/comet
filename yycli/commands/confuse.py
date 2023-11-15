@@ -1,6 +1,9 @@
 """confuse command
 """
 from collections.abc import Iterable
+from .. import config
+
+CONST_EXPAND_MASK = 0xffffffff00000000
 
 
 def args_parser(parser):
@@ -16,20 +19,21 @@ def args_parser(parser):
         '-m',
         '--magic',
         type=int,
+        default=None,
         help='magic number',
     )
     parser.add_argument(
         '-b',
         '--block-size',
         type=int,
-        default=8,
+        default=None,
         help='block size',
     )
     parser.add_argument(
         '-B',
         '--block-order',
         type=str,
-        default='1,3,0,2',
+        default=None,
         help='block confuse order',
     )
     parser.add_argument(
@@ -90,7 +94,7 @@ def clarify(number: int, magic: int, block_size: int, block_order: str):
     """
     order = list(map(int, block_order.split(',')))
     rules = zip(order, range(len(order)))
-    result = _clarify(number, magic, block_size, rules, 0xffffffff00000000)
+    result = _clarify(number, magic, block_size, rules, CONST_EXPAND_MASK)
     return result
 
 
@@ -99,18 +103,23 @@ def confuse(number: int, magic: int, block_size: int, block_order: str):
     """
     order = list(map(int, block_order.split(',')))
     rules = zip(range(len(order)), order)
-    result = _confuse(number, magic, block_size, rules, 0xffffffff00000000)
+    result = _confuse(number, magic, block_size, rules, CONST_EXPAND_MASK)
     return result
 
 
 def entrypoint(args):
     """command entrypoint
     """
+    magic = config.get('yycli.commands.confuse.magic')
+    if args.magic is not None:
+        magic = args.magic
+    block_size = config.get('yycli.commands.confuse.block_size')
+    if args.block_size is not None:
+        block_size = args.block_size
+    block_order = config.get('yycli.commands.confuse.block_order')
+    if args.block_order is not None:
+        block_order = args.block_order
     if args.clarify:
-        print(
-            clarify(args.number, args.magic, args.block_size,
-                    args.block_order))
+        print(clarify(args.number, magic, block_size, block_order))
     else:
-        print(
-            confuse(args.number, args.magic, args.block_size,
-                    args.block_order))
+        print(confuse(args.number, magic, block_size, block_order))

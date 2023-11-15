@@ -7,3 +7,7 @@
   aes_iv = '00000000000000000000000000000000'
   aes_length = 16
   algorithm = 'aes-256-cbc'
+[yycli.commands.confuse]
+  magic = 39
+  block_size = 8
+  block_order = '0,1,2,3'
