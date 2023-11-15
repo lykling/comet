@@ -113,12 +113,18 @@ def entrypoint(args):
     magic = config.get('yycli.commands.confuse.magic')
     if args.magic is not None:
         magic = args.magic
+    if not isinstance(magic, int):
+        raise ValueError('magic number must be int')
     block_size = config.get('yycli.commands.confuse.block_size')
     if args.block_size is not None:
         block_size = args.block_size
+    if not isinstance(block_size, int):
+        raise ValueError('block size must be int')
     block_order = config.get('yycli.commands.confuse.block_order')
     if args.block_order is not None:
         block_order = args.block_order
+    if not isinstance(block_order, str):
+        raise ValueError('block order must be str')
     if args.clarify:
         print(clarify(args.number, magic, block_size, block_order))
     else:
