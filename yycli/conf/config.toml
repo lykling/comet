@@ -11,3 +11,9 @@
   magic = 39
   block_size = 8
   block_order = '0,1,2,3'
+[yycli.commands.ipinfo]
+  dbtype = 'geoip'
+  geoip_database_path = '~/.config/yycli/data/GeoLite2-City.mmdb'
+  geoip_database_download_url = 'https://git.io/GeoLite2-City.mmdb'
+  ipip_database_path = '~/.config/yycli/data/ipipfree.ipdb'
+  ipip_database_download_url = 'https://www.ipip.net/free_download/'

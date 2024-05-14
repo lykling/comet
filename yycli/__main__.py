@@ -30,6 +30,9 @@ def main():
     confuse_parser = subparsers.add_parser('confuse', help='confuse help')
     register_command(confuse_parser, 'confuse', commands.confuse.entrypoint,
                      commands.confuse.args_parser)
+    ipinfo_parser = subparsers.add_parser('ipinfo', help='ipinfo help')
+    register_command(ipinfo_parser, 'ipinfo', commands.ipinfo.ipinfo,
+                     commands.ipinfo.args_parser)
     args = parser.parse_args()
     if args.command is None:
         parser.print_help()
