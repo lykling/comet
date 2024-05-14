@@ -33,6 +33,9 @@ def main():
     ipinfo_parser = subparsers.add_parser('ipinfo', help='ipinfo help')
     register_command(ipinfo_parser, 'ipinfo', commands.ipinfo.ipinfo,
                      commands.ipinfo.args_parser)
+    weather_parser = subparsers.add_parser('weather', help='weather help')
+    register_command(weather_parser, 'weather', commands.weather.weather,
+                     commands.weather.args_parser)
     args = parser.parse_args()
     if args.command is None:
         parser.print_help()
