@@ -2,7 +2,9 @@
 """Main module for the application.
 """
 import argparse
+import importlib
 from . import commands
+from . import config
 
 COMMANDS = {}
 
@@ -36,10 +38,38 @@ def main():
     weather_parser = subparsers.add_parser('weather', help='weather help')
     register_command(weather_parser, 'weather', commands.weather.weather,
                      commands.weather.args_parser)
+
+    plugins_config = config.get('yycli.plugins')
+    if isinstance(plugins_config, dict):
+        for plugin_name, options in config.get('yycli.plugins').items():
+            command = options.get('command', plugin_name)
+            modpath = options.get('module', plugin_name)
+            entry_name = options.get('entry', 'main')
+            args_parser_name = options.get('args_parser', 'args_parser')
+
+            try:
+                module = importlib.import_module(modpath)
+                entry = getattr(module, entry_name)
+                args_parser = getattr(module, args_parser_name, None)
+
+                command_parser = subparsers.add_parser(command,
+                                                       help=f'{command} help')
+
+                register_command(command_parser, command, entry, args_parser)
+            except ModuleNotFoundError:
+                print(f'Error loading plugin {plugin_name} from {modpath}')
+                print(f'Could not find module {modpath}')
+                continue
+            except AttributeError:
+                print(f'Error loading plugin {plugin_name} from {modpath}')
+                print(f'Could not find entry point {entry_name}')
+                continue
+
     args = parser.parse_args()
     if args.command is None:
         parser.print_help()
         return
+
     COMMANDS[args.command]['command'](args)
 
 
