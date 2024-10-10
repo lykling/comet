@@ -16,7 +16,22 @@ def register_command(parser: argparse.ArgumentParser, name: str,
     if args_parser is not None:
         args_parser(parser)
 
-    COMMANDS[name] = {'name': name, 'command': command}
+    COMMANDS[name] = {'name': name, 'type': 'command', 'command': command}
+
+
+def register_plugin(parser: argparse.ArgumentParser, name: str,
+                    plugin: callable, args_parser: callable, options):
+    """register plugin
+    """
+    if args_parser is not None:
+        args_parser(parser)
+
+    COMMANDS[name] = {
+        'name': name,
+        'command': plugin,
+        'type': 'plugin',
+        'options': options
+    }
 
 
 def main():
@@ -55,7 +70,8 @@ def main():
                 command_parser = subparsers.add_parser(command,
                                                        help=f'{command} help')
 
-                register_command(command_parser, command, entry, args_parser)
+                register_plugin(command_parser, command, entry, args_parser,
+                                options)
             except ModuleNotFoundError:
                 print(f'Error loading plugin {plugin_name} from {modpath}')
                 print(f'Could not find module {modpath}')
@@ -70,7 +86,11 @@ def main():
         parser.print_help()
         return
 
-    COMMANDS[args.command]['command'](args)
+    command = COMMANDS[args.command]
+    if command['type'] == 'command':
+        command['command'](args)
+    elif command['type'] == 'plugin':
+        command['command'](args, command['options'])
 
 
 if __name__ == '__main__':
