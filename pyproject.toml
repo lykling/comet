@@ -1,6 +1,6 @@
 [project]
 name = "yycli"
-readme = { file = "README.md", content-type = "text/markdown" }
+readme = { file = "yycli/README.md", content-type = "text/markdown" }
 authors = [
   { name = "Pride Leong", email = "lykling.lyk@gmail.com" }
 ]
