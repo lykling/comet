@@ -1,11 +1,12 @@
 [project]
 name = "yycli"
+readme = { file = "README.md", content-type = "text/markdown" }
 authors = [
   { name = "Pride Leong", email = "lykling.lyk@gmail.com" }
 ]
 description = "tools for routine work"
 requires-python = ">=3.11"
-dynamic = ["dependencies", "version", "readme"]
+dynamic = ["dependencies", "version"]
 
 [project.scripts]
 yy = "yycli.__main__:main"
@@ -16,7 +17,6 @@ include-package-data = true
 [tool.setuptools.dynamic]
 dependencies = {file = ["requirements.txt"]}
 version = {attr = "yycli.VERSION"}
-readme = {file = "yycli/README.md"}
 
 [tool.setuptools.packages]
 find = {}

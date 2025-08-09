@@ -33,10 +33,20 @@
   ipip_database_download_url = 'https://www.ipip.net/free_download/'
 
 [yycli.commands.weather]
-  access_key = 'you access key'
-  secret_key = 'you secret key'
+  api_backend = 'amap'
+  format_string = '%(area)s %(phenomenon)s %(temperature)sºC %(wind_directory)s/%(wind_class)s'
+  [yycli.commands.weather.api_backends.amap]
+  key = 'your key'
+  endpoint = 'https://restapi.amap.com'
+  api = '/v3/weather/weatherInfo'
+  adcode_reference_path = '~/.config/yycli/data/AMap_adcode_citycode.zip'
+  adcode_reference_download_url = 'https://a.amap.com/lbs/static/code_resource/AMap_adcode_citycode.zip'
+  [yycli.commands.weather.api_backends.baidu]
+  access_key = 'your access key'
+  secret_key = 'your secret key'
+  endpoint = 'https://api.map.baidu.com'
+  api = '/weather/v1/'
   district_id_reference_path = '~/.config/yycli/data/weather_district_id.csv'
   district_id_reference_download_url = 'https://mapopen-website-wiki.bj.bcebos.com/cityList/weather_district_id.csv'
   phenomenon_reference_path = '~/.config/yycli/data/weather_phenomenon_reference.xlsx'
   phenomenon_reference_download_url = 'https://mapopen-website-wiki.cdn.bcebos.com/cityList/%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE%E5%A4%A9%E6%B0%94%E5%8F%96%E5%80%BC%E5%AF%B9%E7%85%A7%E8%A1%A8(0410).xlsx'
-  format_string = '%(area)s %(phenomenon)s %(temperature)sºC %(wind_directory)s/%(wind_class)s'
