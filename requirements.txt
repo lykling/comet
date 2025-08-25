@@ -5,4 +5,4 @@ requests
 openpyxl
 ipip-ipdb
 xlrd
-PyJWT
+PyJWT[crypto]
