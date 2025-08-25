@@ -50,3 +50,22 @@
   district_id_reference_download_url = 'https://mapopen-website-wiki.bj.bcebos.com/cityList/weather_district_id.csv'
   phenomenon_reference_path = '~/.config/yycli/data/weather_phenomenon_reference.xlsx'
   phenomenon_reference_download_url = 'https://mapopen-website-wiki.cdn.bcebos.com/cityList/%E7%99%BE%E5%BA%A6%E5%9C%B0%E5%9B%BE%E5%A4%A9%E6%B0%94%E5%8F%96%E5%80%BC%E5%AF%B9%E7%85%A7%E8%A1%A8(0410).xlsx'
+  [yycli.commands.weather.api_backends.seniverse]
+  public_key = 'your public key'
+  secret_key = 'your secret key'
+  endpoint = 'https://api.seniverse.com'
+  api = '/v3/weather/now.json'
+  district_id_reference_path = '~/.config/yycli/data/weather_district_id.csv'
+  district_id_reference_download_url = 'https://mapopen-website-wiki.bj.bcebos.com/cityList/weather_district_id.csv'
+  cities_reference_path = '~/.config/yycli/data/thinkpage_cities.zip'
+  cities_reference_download_url = "https://cdn.sencdn.com/download/data/thinkpage_cities.zip"
+  [yycli.commands.weather.api_backends.qweather]
+  sub = 'your project id'
+  kid = 'your key id'
+  alg = 'EdDSA'
+  endpoint = 'your access endpoint'
+  api = '/v7/weather/now'
+  private_key_path = '~/.config/yycli/conf/qweather-private.pem'
+  cities_reference_path = '~/.config/yycli/data/China-City-List-latest.csv'
+  cities_reference_download_url = 'https://raw.githubusercontent.com/qwd/LocationList/refs/heads/master/China-City-List-latest.csv'
+

@@ -6,6 +6,7 @@ from ... import config
 from .backends.baidu import Baidu as WeatherBaidu
 from .backends.amap import Amap as WeatherAmap
 from .backends.seniverse import Seniverse as WeatherSeniverse
+from .backends.qweather import QWeather as WeatherQWeather
 
 
 def args_parser(parser):
@@ -42,6 +43,9 @@ def weather(args):
     elif backend_type == 'seniverse':
         opts = config.get('yycli.commands.weather.api_backends.seniverse')
         backend = WeatherSeniverse(**opts)
+    elif backend_type == 'qweather':
+        opts = config.get('yycli.commands.weather.api_backends.qweather')
+        backend = WeatherQWeather(**opts)
     if not backend:
         raise ValueError('No valid weather backend configured.')
 
